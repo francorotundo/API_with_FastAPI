@@ -52,3 +52,11 @@ async def update_persons_work(work_id: int, work_data: WorkUpdate, session: Sess
         "data": work
     }
     
+    
+@router.delete('/persons/works/{work_id}', tags=['Work'])
+async def delete_persons_work(work_id: int, session: SessionDep):
+    work = session.get(Work, work_id)
+    error_404('Work', work)
+    session.delete(work)
+    session.commit()
+    return {"message": "Work deleted correctly."}

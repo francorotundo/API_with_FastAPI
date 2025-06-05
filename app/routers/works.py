@@ -12,6 +12,8 @@ router = APIRouter()
 @router.get('/persons/{person_id}/works/', response_model=list[Work], tags=['Work'])
 async def list_persons_work(person_id: int, session: SessionDep):
     works = session.exec(select(Work).where(person_id == person_id)).all()
+    if not works:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Without data yet.")
     return works
 
 @router.post('/persons/{person_id}/works/', tags=['Work'], status_code=status.HTTP_201_CREATED)

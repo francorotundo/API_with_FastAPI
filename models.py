@@ -2,6 +2,18 @@ from typing import List, Optional
 from sqlmodel import Field, Relationship, SQLModel
 from datetime import date
 
+class UserPasword(SQLModel):
+    password : str
+    
+    
+class UserCreate(UserPasword):
+    username : Optional[str] = None
+    
+    
+class User(UserCreate, table=True):
+    id: Optional[int] = Field(default=True, primary_key=True)
+    
+
 class PersonCreate(SQLModel):
     name : Optional[str] = None 
     lastname : Optional[str] = None 

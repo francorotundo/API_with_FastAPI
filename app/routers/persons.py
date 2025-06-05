@@ -1,13 +1,23 @@
+from typing import List
 from fastapi import APIRouter, HTTPException, status
 from sqlmodel import select
 from db import SessionDep
-from models import Person
+from models import Person, PersonCreate
 
 router = APIRouter()
 
-@router.get('/', tags=['Person'], response_model=Person, status_code=status.HTTP_200_OK)
+@router.get('/persons', tags=['Person'], response_model=List[Person], status_code=status.HTTP_200_OK)
 async def list_person(session: SessionDep):
     persons = session.exec(select(Person)).all()
     if not persons:
          raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Person doens't found.")
     return persons
+
+@router.post('/persons', tags=['Person'], status_code=status.HTTP_201_CREATED)
+async def create_person(person_data: PersonCreate, session: SessionDep):
+    person = Person.model_validate(person_data.model_dump())
+    session.add(person)
+    session.commit()
+    session.refresh(person)
+    return {"message": "Person created correctly."}
+    

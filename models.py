@@ -2,16 +2,19 @@ from typing import List, Optional
 from sqlmodel import Field, Relationship, SQLModel
 from datetime import date
 
-class Person(SQLModel, table=True):
-    id : Optional[int] = Field(primary_key=True)
+class PersonCreate(SQLModel):
     name : str 
     lastname : str
-    works: List['Work'] = Relationship(back_populates="person")
     nationality: str
     year: int
     
-        
     
+class Person(PersonCreate, table=True):
+    id : Optional[int] = Field(default=None, primary_key=True)
+    works: List['Work'] = Relationship(back_populates="person")
+    
+    
+            
 class Work(SQLModel, table=True):
     id : Optional[int] = Field(primary_key=True)
     company: str

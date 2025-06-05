@@ -18,9 +18,14 @@ class WorkCreate(SQLModel):
     company: Optional[str] = None
     initContract: Optional[date] = None
     finishContract: Optional[date] = None
+    
+    
+class WorkUpdate(WorkCreate):
+    person_id: int = Field(default=None, foreign_key="person.id")
+     
          
-         
-class Work(WorkCreate, table=True):
+class Work(WorkUpdate, table=True):
     id : Optional[int] = Field(default=None, primary_key=True)
-    person_id: int = Field(foreign_key="person.id")
     person: Person = Relationship(back_populates='works')
+    
+    

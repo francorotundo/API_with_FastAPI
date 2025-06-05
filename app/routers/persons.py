@@ -42,3 +42,14 @@ async def update_person(person_id: int, person_data: PersonCreate, session: Sess
     session.add(person)
     session.commit()
     return {"message": "Person updated correctly."}
+
+
+@router.delete('/persons/{person_id}', tags=['Person'])
+async def delete_person(person_id: int, session: SessionDep):
+    person = session.get(Person, person_id)
+    if not person:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Person not found.")
+    
+    session.delete(person)
+    session.commit()
+    return {"message": "Person deleted correctly."}

@@ -53,3 +53,5 @@ async def delete_person(person_id: int, session: SessionDep):
     session.delete(person)
     session.commit()
     return {"message": "Person deleted correctly."}
+
+

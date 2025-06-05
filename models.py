@@ -14,11 +14,13 @@ class Person(PersonCreate, table=True):
     works: List['Work'] = Relationship(back_populates="person")
     
     
-            
-class Work(SQLModel, table=True):
-    id : Optional[int] = Field(primary_key=True)
+class WorkCreate(SQLModel):
     company: str
     initContract: date
     finishContract: date
+         
+         
+class Work(SQLModel, table=True):
+    id : Optional[int] = Field(primary_key=True)
     person_id: int = Field(foreign_key="person.id")
     person: Person = Relationship(back_populates='works')

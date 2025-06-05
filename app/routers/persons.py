@@ -20,7 +20,7 @@ async def create_person(person_data: PersonCreate, session: SessionDep):
     session.add(person)
     session.commit()
     session.refresh(person)
-    return {"message": "Person created correctly."}
+    return {"message": "Person created correctly.", "data": person }
     
 
 @router.get('/persons/{person_id}', tags=['Person'], response_model=Person, status_code=status.HTTP_200_OK)

@@ -11,7 +11,7 @@ class UserCreate(UserPasword):
     
     
 class User(UserCreate, table=True):
-    id: Optional[int] = Field(default=True, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
     
 
 class PersonCreate(SQLModel):

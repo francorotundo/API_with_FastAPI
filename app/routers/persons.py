@@ -10,8 +10,9 @@ router = APIRouter()
 async def list_person(session: SessionDep):
     persons = session.exec(select(Person)).all()
     if not persons:
-         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Person doens't found.")
+         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Without data yet.")
     return persons
+
 
 @router.post('/persons', tags=['Person'], status_code=status.HTTP_201_CREATED)
 async def create_person(person_data: PersonCreate, session: SessionDep):
@@ -21,3 +22,10 @@ async def create_person(person_data: PersonCreate, session: SessionDep):
     session.refresh(person)
     return {"message": "Person created correctly."}
     
+
+@router.get('/persons/{person_id}', tags=['Person'], response_model=Person, status_code=status.HTTP_200_OK)
+async def detail_person(person_id: int, session: SessionDep):
+    person = session.get(Person, person_id)
+    if not person:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,  detail="Person doens't found.")
+    return person

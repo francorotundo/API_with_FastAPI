@@ -27,5 +27,18 @@ async def create_person(person_data: PersonCreate, session: SessionDep):
 async def detail_person(person_id: int, session: SessionDep):
     person = session.get(Person, person_id)
     if not person:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,  detail="Person doens't found.")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,  detail="Person not found.")
     return person
+
+
+@router.patch('/persons/{person_id}', tags=['Person'])
+async def update_person(person_id: int, person_data: PersonCreate, session: SessionDep):
+    person = session.get(Person, person_id)
+    if not person:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Person not found.")
+    
+    person_update = person_data.model_dump(exclude_unset=True)
+    person.sqlmodel_update(person_update)
+    session.add(person)
+    session.commit()
+    return {"message": "Person updated correctly."}

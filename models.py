@@ -3,10 +3,10 @@ from sqlmodel import Field, Relationship, SQLModel
 from datetime import date
 
 class PersonCreate(SQLModel):
-    name : str 
-    lastname : str
-    nationality: str
-    year: int
+    name : Optional[str] = None 
+    lastname : Optional[str] = None 
+    nationality: Optional[str] = None 
+    year: Optional[int] = None 
     
     
 class Person(PersonCreate, table=True):

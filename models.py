@@ -7,7 +7,7 @@ class UserPasword(SQLModel):
     
     
 class UserCreate(UserPasword):
-    username : Optional[str] = None
+    username : Optional[str] = Field(unique=True, default=None)
     
     
 class User(UserCreate, table=True):

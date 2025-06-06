@@ -1,0 +1,5 @@
+"pyjwt[crypto]"
+bcrypt==4.3.0
+"fastapi[standard]"
+python-dotenv==1.1.0
+sqlmodel==0.0.24

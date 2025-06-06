@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import select
 from app.routers.token import Auth, TokenData
 from db import SessionDep
-from models import Person, PersonCreate
+from models import Person, PersonCreate, Work
 
 from .error_404 import error_404
 
@@ -26,10 +26,12 @@ async def create_person(person_data: PersonCreate, session: SessionDep, auth: To
     return {"message": "Person created correctly.", "data": person }
     
 
-@router.get('/persons/{person_id}', tags=['Person'], response_model=Person, status_code=status.HTTP_200_OK)
+@router.get('/persons/{person_id}', tags=['Person'], status_code=status.HTTP_200_OK)
 async def detail_person(person_id: int, session: SessionDep, auth: TokenData = Depends(Auth())):
-    person = session.get(Person, person_id)
+    person = dict(session.get(Person, person_id))
     error_404("Person", person)
+    works = session.exec(select(Work).where(Work.person_id == person_id)).all()
+    person['works'] = works
     return person
 
 

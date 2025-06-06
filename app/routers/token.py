@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import jwt, bcrypt, os
-from fastapi import APIRouter, HTTPException, status 
+from fastapi import APIRouter, HTTPException, Request, status 
 from sqlmodel import select
 
 from db import SessionDep
@@ -14,6 +15,11 @@ load_dotenv('.env')
 secret_key = os.getenv('SECRET_KEY')
 algorithm = os.getenv('ALGORITHM')
 expiration_time = os.getenv('ACCESS_TOKEN_EXPIRE_SECONDS')
+
+
+class TokenData:
+    def __init__(self, user: dict):
+        self.user = user
 
 
 @router.post('/token', tags=['Token'])
@@ -38,3 +44,27 @@ async def login_for_access_token(user_data: UserCreate, session: SessionDep):
     token = jwt.encode(payload, secret_key, algorithm=algorithm)
     
     return {"access_token": token, "token_type": "bearer"}
+
+
+def verify_token(token: str):
+
+    try:
+        payload = jwt.decode(token, secret_key, algorithms=[algorithm])
+        return payload
+    except jwt.ExpiredSignatureError:
+        return None 
+    except jwt.InvalidSignatureError:
+        return None 
+    except jwt.DecodeError:
+        return None 
+
+
+class Auth(HTTPBearer):
+    
+    async def __call__(self, request: Request) -> HTTPAuthorizationCredentials:
+        credentials: HTTPAuthorizationCredentials = await super().__call__(request)
+        payload = verify_token(credentials.credentials)
+        if not payload:
+            raise HTTPException(status_code=401, detail="Invalid credentials", headers={"WWW-Authenticate": "Bearer"})
+
+        return TokenData(user=payload)

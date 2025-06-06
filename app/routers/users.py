@@ -17,7 +17,7 @@ async def list_user(session: SessionDep, auth: TokenData = Depends(Auth())):
     return users
 
 @router.post('/user', tags=['User'])
-async def create_user(user_data: UserCreate, session: SessionDep, auth: TokenData = Depends(Auth())):
+async def create_user(user_data: UserCreate, session: SessionDep):
     user_data = user_data.model_dump()
     
     password = user_data['password'].encode('utf-8')
@@ -27,5 +27,11 @@ async def create_user(user_data: UserCreate, session: SessionDep, auth: TokenDat
     user = User.model_validate(user_data)
     session.add(user)
     session.commit()
-    return {"message": "User created correctly."} 
+    return {
+        "message": "User created correctly.",
+        "data": {
+            "username": user_data['username'],
+            "password": password   
+        }
+        } 
     
